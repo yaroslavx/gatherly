@@ -6,6 +6,7 @@ using Gatherly.Presentation.Abstractions;
 using Gatherly.Presentation.Contracts.Members;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Gatherly.Application.Members.Login;
 
 namespace Gatherly.Presentation.Controllers;
 
@@ -25,6 +26,24 @@ public sealed class MembersController : ApiController
         Result<MemberResponse> response = await Sender.Send(query, cancellationToken);
 
         return response.IsSuccess ? Ok(response.Value) : NotFound(response.Error);
+    }
+
+    public async Task<IActionResult> LoginMember(
+        [FromBody] LoginRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command = new LoginCommand(request.Email);
+
+        Result<string> tokenResult = await Sender.Send( 
+            command,
+            cancellationToken);
+        
+        if (tokenResult.IsFailure)
+        {
+            return HandleFailure(tokenResult);
+        }
+
+        return Ok(tokenResult.Value);
     }
 
     [HttpPost]
