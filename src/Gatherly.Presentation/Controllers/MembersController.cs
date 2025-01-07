@@ -7,6 +7,7 @@ using Gatherly.Presentation.Contracts.Members;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Gatherly.Application.Members.Login;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Gatherly.Presentation.Controllers;
 
@@ -18,6 +19,7 @@ public sealed class MembersController : ApiController
     {
     }
 
+    [Authorize]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetMemberById(Guid id, CancellationToken cancellationToken)
     {
